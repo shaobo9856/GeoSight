@@ -12,6 +12,8 @@ huggingface-cli login
 
 python3 main.py
 
+pip install tqdm
+
 
 
 
