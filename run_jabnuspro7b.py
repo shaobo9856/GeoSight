@@ -1,18 +1,22 @@
 import os
 import json
 from pathlib import Path
-from transformers import AutoModelForVision2Seq, AutoProcessor
+from transformers import AutoModelForCausalLM
+from janus.models import MultiModalityCausalLM, VLChatProcessor
+from janus.utils.io import load_pil_images
 import torch
 from PIL import Image
 from tqdm import tqdm
 
 # 加载 Janus-Pro-7B 模型和处理器
-model = AutoModelForVision2Seq.from_pretrained(
+model = AutoModelForCausalLM.from_pretrained(
     "janus-project/Janus-Pro-7B",
-    torch_dtype=torch.bfloat16,
-    device_map="auto"
+    trust_remote_code=True
 )
-processor = AutoProcessor.from_pretrained("janus-project/Janus-Pro-7B")
+model = model.to(torch.bfloat16).cuda().eval()
+
+processor = VLChatProcessor.from_pretrained("janus-project/Janus-Pro-7B")
+tokenizer = processor.tokenizer
 
 # 图像目录
 image_dir = Path("./dataset/image")
@@ -31,23 +35,31 @@ image_files = list(image_dir.glob("*.[jp][pn]g"))  # 支持 jpg 和 png
 
 for image_path in tqdm(image_files, desc="Processing Images"):
     try:
-        image = Image.open(image_path).convert("RGB")
-
-        inputs = processor(
-            text=prompt_text,
-            images=image,
-            return_tensors="pt"
+        conversation = [
+            {
+                "role": "<|User|>",
+                "content": f"<image_placeholder>\n{prompt_text}",
+                "images": [f"file://{image_path.resolve()}"],
+            }
+        ]
+        pil_images = load_pil_images(conversation)
+        prepare_inputs = processor(conversations=conversation, images=pil_images, force_batchify=True
         ).to(model.device)
 
-        generated_ids = model.generate(
-            **inputs,
+        inputs_embeds = model.prepare_inputs_embeds(**prepare_inputs)
+
+        outputs = model.language_model.generate(
+            inputs_embeds=inputs_embeds,
+            attention_mask=prepare_inputs.attention_mask,
+            pad_token_id=tokenizer.eos_token_id,
+            bos_token_id=tokenizer.bos_token_id,
+            eos_token_id=tokenizer.eos_token_id,
             max_new_tokens=512,
-            do_sample=False
+            do_sample=False,
+            use_cache=True,
         )
 
-        output_text = processor.batch_decode(
-            generated_ids, skip_special_tokens=True
-        )[0].strip()
+        output_text = tokenizer.decode(outputs[0].cpu().tolist(), skip_special_tokens=True)
 
         try:
             result_json = json.loads(output_text)

@@ -8,10 +8,11 @@ pip install transformers accelerate pillow timm
 
 huggingface-cli login
 
+pip install -e .
 
 nohup python3 run_qwen2.py > run_qwen2.log 2>&1 &
-python3 run_llama32.py
-python3 run_jabnuspro7b.py
+nohup python3 run_llama32.py > run_llama32.log 2>&1 &
+nohup python3 run_jabnuspro7b.py > run_jabnuspro7b.log 2>&1 &
 nohup python3 run_llava16.py > run_llava16.log 2>&1 &
 
 
