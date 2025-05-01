@@ -31,7 +31,7 @@ messages = [
         "content": [
             {
                 "type": "image",
-                "image": "file:///dataset/image/C0_COM_001.jpg",
+                "image": "file://./dataset/image/C0_COM_001.jpg",
             },
             {"type": "text", "text": "Describe this image."},
         ],
