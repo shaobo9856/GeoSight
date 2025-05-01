@@ -3,14 +3,14 @@
 import os
 import json
 from pathlib import Path
-from transformers import LlamaForConditionalGeneration, AutoProcessor
-from llama_vl_utils import process_vision_info  # Update if needed for the new model
+from transformers import MllamaForConditionalGeneration, AutoProcessor
+# from llama_vl_utils import process_vision_info  # Update if needed for the new model
 import torch
 from tqdm import tqdm 
 
 
 # Load the Llama-3.2-11B-Vision model
-model = LlamaForConditionalGeneration.from_pretrained(
+model = MllamaForConditionalGeneration.from_pretrained(
     "meta-llama/Llama-3.2-11B-Vision-Instruct", torch_dtype=torch.bfloat16, device_map="auto"
 )
 
@@ -43,13 +43,13 @@ for image_path in tqdm(image_files, desc="Processing Images"):
                 ],
             }
         ]
-
+        image_inputs = Image.open(image_path)
         text = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        image_inputs, video_inputs = process_vision_info(messages)
+        # image_inputs, video_inputs = process_vision_info(messages)
         inputs = processor(
             text=[text],
             images=image_inputs,
-            videos=video_inputs,
+            # videos=video_inputs,
             padding=True,
             return_tensors="pt",
         )
