@@ -1,6 +1,16 @@
 Benchmark GeoSight
 
-pip install qwen-vl-utils
+git clone https://github.com/shaobo9856/GeoSight.git
+
+pip3 install transformers
+
+pip3 install qwen-vl-utils
+pip install accelerate
+
+huggingface-cli login
+
+
+python3 main.py
 
 
 
