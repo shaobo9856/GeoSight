@@ -3,26 +3,26 @@
 import os
 import json
 from pathlib import Path
-from transformers import Qwen2VLForConditionalGeneration, AutoProcessor
-from qwen_vl_utils import process_vision_info
+from transformers import LlamaForConditionalGeneration, AutoProcessor
+from llama_vl_utils import process_vision_info  # Update if needed for the new model
 import torch
 from tqdm import tqdm 
 
 
-# default: Load the model on the available device(s)
-model = Qwen2VLForConditionalGeneration.from_pretrained(
-    "Qwen/Qwen2-VL-7B-Instruct", torch_dtype=torch.bfloat16, device_map="auto"
+# Load the Llama-3.2-11B-Vision model
+model = LlamaForConditionalGeneration.from_pretrained(
+    "Llama/Llama-3.2-11B-Vision", torch_dtype=torch.bfloat16, device_map="auto"
 )
 
-# default processer
-processor = AutoProcessor.from_pretrained("Qwen/Qwen2-VL-7B-Instruct")
+# Load the processor for the model
+processor = AutoProcessor.from_pretrained("Llama/Llama-3.2-11B-Vision")
 
 # 输入图像文件夹路径
 image_dir = Path("./dataset/image")
 assert image_dir.exists(), f"Directory not found: {image_dir}"
 
 # 输出 JSON 文件路径
-output_file = Path("geo_inference_results.json")
+output_file = Path("run_llama32_results.json")
 
 
 # 固定 prompt
@@ -80,7 +80,8 @@ for image_path in tqdm(image_files, desc="Processing Images"):
             generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
         )[0]
         print(output_text)
-        # 解析为 JSON 格式（如果可能）
+
+        # Try parsing the output as JSON
         try:
             result_json = json.loads(output_text)
         except json.JSONDecodeError:
@@ -92,7 +93,7 @@ for image_path in tqdm(image_files, desc="Processing Images"):
         results[image_path.name] = {"error": str(e)}
         print(f"❌ Failed: {image_path.name} | {e}")
 
-# 保存所有结果
+# Save all results to JSON file
 with open(output_file, "w", encoding="utf-8") as f:
     json.dump(results, f, indent=2, ensure_ascii=False)
 
