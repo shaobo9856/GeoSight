@@ -2,11 +2,10 @@ Benchmark GeoSight
 
 git clone https://github.com/shaobo9856/GeoSight.git
 
-pip3 install transformers
 
 pip3 install qwen-vl-utils
-pip install accelerate
 pip install tqdm
+pip install transformers accelerate pillow timm
 
 huggingface-cli login
 
