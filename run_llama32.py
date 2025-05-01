@@ -11,11 +11,11 @@ from tqdm import tqdm
 
 # Load the Llama-3.2-11B-Vision model
 model = LlamaForConditionalGeneration.from_pretrained(
-    "Llama/Llama-3.2-11B-Vision", torch_dtype=torch.bfloat16, device_map="auto"
+    "meta-llama/Llama-3.2-11B-Vision-Instruct", torch_dtype=torch.bfloat16, device_map="auto"
 )
 
 # Load the processor for the model
-processor = AutoProcessor.from_pretrained("Llama/Llama-3.2-11B-Vision")
+processor = AutoProcessor.from_pretrained("meta-llama/Llama-3.2-11B-Vision-Instruct")
 
 # 输入图像文件夹路径
 image_dir = Path("./dataset/image")
