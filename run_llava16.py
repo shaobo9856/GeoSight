@@ -1,17 +1,15 @@
 import os
 import json
 from pathlib import Path
-from transformers import LlavaForConditionalGeneration, AutoProcessor
+from transformers import LlavaNextProcessor, LlavaNextForConditionalGeneration
 import torch
 from tqdm import tqdm
 
 # 加载模型和 processor（确保你已下载/配置好权重）
-model = LlavaForConditionalGeneration.from_pretrained(
-    "llava-hf/llava-v1.6-34b-hf",
-    torch_dtype=torch.bfloat16,
-    device_map="auto"
-)
-processor = AutoProcessor.from_pretrained("llava-hf/llava-v1.6-34b-hf")
+model = LlavaNextForConditionalGeneration.from_pretrained("llava-hf/llava-v1.6-34b-hf", torch_dtype=torch.float16, low_cpu_mem_usage=True) 
+model.to("cuda:0")
+
+processor = LlavaNextProcessor.from_pretrained("llava-hf/llava-v1.6-34b-hf")
 
 # 输入图像文件夹路径
 image_dir = Path("./dataset/image")
@@ -32,22 +30,25 @@ for image_path in tqdm(image_files, desc="Processing Images"):
     try:
         # 读取图像并构造输入
         image = processor.image_processor.open(image_path)
+        conversation = [
+            {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": prompt_text},
+                {"type": "image"},
+                ],
+            },
+        ]
+        prompt = processor.apply_chat_template(conversation, add_generation_prompt=True)
 
-        inputs = processor(
-            text=prompt_text,
-            images=image,
-            return_tensors="pt"
-        ).to(model.device)
+        inputs = processor(images=image, text=prompt, return_tensors="pt").to("cuda:0")
 
-        generated_ids = model.generate(
+        output = model.generate(
             **inputs,
-            max_new_tokens=512,
-            do_sample=False
+            max_new_tokens=100
         )
-
-        output_text = processor.batch_decode(
-            generated_ids, skip_special_tokens=True
-        )[0].strip()
+        output_text = processor.decode(output[0], skip_special_tokens=True)
+        print(output_text)
 
         # 解析为 JSON 格式（如果可能）
         try:

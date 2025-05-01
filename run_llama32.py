@@ -7,6 +7,7 @@ from transformers import MllamaForConditionalGeneration, AutoProcessor
 # from llama_vl_utils import process_vision_info  # Update if needed for the new model
 import torch
 from tqdm import tqdm 
+from PIL import Image
 
 
 # Load the Llama-3.2-11B-Vision model
@@ -34,11 +35,12 @@ results = {}
 image_files = list(image_dir.glob("*.[jp][pn]g"))  # 支持 jpg 和 png
 for image_path in tqdm(image_files, desc="Processing Images"):
     try:
+        # print(prompt_text)
         messages = [
             {
                 "role": "user",
                 "content": [
-                    {"type": "image", "image": f"file://{image_path.resolve()}"},
+                    {"type": "image"},
                     {"type": "text", "text": prompt_text},
                 ],
             }
@@ -50,7 +52,7 @@ for image_path in tqdm(image_files, desc="Processing Images"):
             text=[text],
             images=image_inputs,
             # videos=video_inputs,
-            padding=True,
+            add_special_tokens=False,
             return_tensors="pt",
         )
         inputs = inputs.to("cuda")
