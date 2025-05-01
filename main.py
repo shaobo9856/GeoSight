@@ -33,7 +33,18 @@ messages = [
                 "type": "image",
                 "image": "file://./dataset/image/C0_COM_001.jpg",
             },
-            {"type": "text", "text": "Describe this image."},
+            {"type": "text", "text": '''You are an expert in geo-location inference. 
+                For EACH photo, infer the following THREE pieces of information based on the location being within South Korea, and return them in a specific format:
+
+                1. Address        : [the inferred address of the image location, starting with the first-level administrative division in South Korea (e.g., City or Province), followed by second-level and third-level administrative divisions (if applicable), then the street name and building number]
+                - If any administrative division (second-level or third-level) is not available, leave it blank and format the address as "First-Level Administrative Division, Street Name, Building Number".
+                - Try to infer as much detail as possible, including the second and third-level administrative divisions.
+                2. Coordinates    : [the inferred latitude and longitude of the location]
+                3. Inference      : [the reasoning process that led to this address and coordinates]
+
+                Return a SINGLE LINE JSON with EXACTLY these keys and no extra text. Format it as:
+                {"Address": "First-Level Administrative Division, Second-Level Administrative Division (if applicable), Third-Level Administrative Division (if applicable), Street Name, Building Number", "Coordinates": "latitude,longitude", "Inference": "reasoning_process_here"}'''
+             },
         ],
     }
 ]
