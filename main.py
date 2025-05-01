@@ -105,7 +105,7 @@ for image_path in tqdm(image_files, desc="Processing Images"):
         output_text = processor.batch_decode(
             generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
         )[0]
-
+        print(output_text)
         # 解析为 JSON 格式（如果可能）
         try:
             result_json = json.loads(output_text)
