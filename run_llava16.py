@@ -7,11 +7,11 @@ from tqdm import tqdm
 
 # 加载模型和 processor（确保你已下载/配置好权重）
 model = LlavaForConditionalGeneration.from_pretrained(
-    "llava-hf/llava-v1.6-yi-34b",
+    "llava-hf/llava-v1.6-34b-hf",
     torch_dtype=torch.bfloat16,
     device_map="auto"
 )
-processor = AutoProcessor.from_pretrained("llava-hf/llava-v1.6-yi-34b")
+processor = AutoProcessor.from_pretrained("llava-hf/llava-v1.6-34b-hf")
 
 # 输入图像文件夹路径
 image_dir = Path("./dataset/image")
