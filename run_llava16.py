@@ -4,6 +4,7 @@ from pathlib import Path
 from transformers import LlavaNextProcessor, LlavaNextForConditionalGeneration
 import torch
 from tqdm import tqdm
+from PIL import Image
 
 # 加载模型和 processor（确保你已下载/配置好权重）
 model = LlavaNextForConditionalGeneration.from_pretrained("llava-hf/llava-v1.6-34b-hf", torch_dtype=torch.float16, low_cpu_mem_usage=True) 
@@ -29,7 +30,7 @@ image_files = list(image_dir.glob("*.[jp][pn]g"))  # 支持 jpg 和 png
 for image_path in tqdm(image_files, desc="Processing Images"):
     try:
         # 读取图像并构造输入
-        image = processor.image_processor.open(image_path)
+        image = Image.open(image_path).convert("RGB")
         conversation = [
             {
             "role": "user",

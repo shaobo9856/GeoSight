@@ -5,6 +5,10 @@ git clone https://github.com/shaobo9856/GeoSight.git
 pip3 install qwen-vl-utils
 pip install tqdm
 pip install transformers accelerate pillow timm
+pip install protobuf
+pip install sentencepiece protobuf accelerate torchvision
+
+
 
 huggingface-cli login
 
@@ -16,7 +20,7 @@ nohup python3 run_jabnuspro7b.py > run_jabnuspro7b.log 2>&1 &
 nohup python3 run_llava16.py > run_llava16.log 2>&1 &
 
 
-ps aux | grep run_llava16.py
+ps aux | grep python
 kill -9 processnumber
 
 
