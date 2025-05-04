@@ -9,7 +9,6 @@ import torch
 from tqdm import tqdm 
 from PIL import Image
 
-
 # Load the Llama-3.2-11B-Vision model
 model = MllamaForConditionalGeneration.from_pretrained(
     "meta-llama/Llama-3.2-11B-Vision-Instruct", torch_dtype=torch.bfloat16, device_map="auto"
