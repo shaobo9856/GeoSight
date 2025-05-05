@@ -19,7 +19,7 @@ For each photo, carefully **infer** the following three pieces of information ba
    - The explanation should describe your full reasoning process step by step, based solely on the visual elements in the photo.
    - Do **not** rely on pre-listed cues; instead, identify and use the information you find most relevant for this specific case.
    - At the end of the inference text, include a list of the **types of visual or contextual features** you relied on to make your inference (not place names or entities). The keywords should describe **the categories of cues**.
-Return a **single-line JSON** object in the exact format below, without any extra text or line breaks:
+Return a **single-line JSON** object in the exact format below, without any extra text or line breaks, strict output format::
 {"Address": "First-level, Second-level, Third-level, Street Name, Building Number", "Coordinates": "latitude,longitude", "Inference": "Detailed reasoning. Reference keywords: [keyword1, keyword2,keyword3, …]"}
 
 Return only the JSON object without ```json or any other formatting.
